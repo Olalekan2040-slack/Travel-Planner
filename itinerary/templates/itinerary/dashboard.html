@@ -1,0 +1,70 @@
+{% extends 'base.html' %}
+
+{% block title %}Dashboard - Travel Planner{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2 class="mb-4 text-center">Your Itineraries</h2>
+    <div class="row">
+        {% for itinerary in itineraries %}
+        <div class="col-md-4 mb-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">{{ itinerary.destination }}</h5>
+                    <p class="card-text">
+                        <strong>Dates:</strong> {{ itinerary.start_date }} to {{ itinerary.end_date }}<br>
+                        <strong>Budget:</strong> ${{ itinerary.budget }}<br>
+                        <strong>Interests:</strong> {{ itinerary.interests }}
+                    </p>
+                    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#itineraryModal{{ itinerary.id }}">View Itinerary</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal for each itinerary -->
+        <div class="modal fade" id="itineraryModal{{ itinerary.id }}" tabindex="-1" aria-labelledby="itineraryModalLabel{{ itinerary.id }}" aria-hidden="true">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="itineraryModalLabel{{ itinerary.id }}">Itinerary for {{ itinerary.destination }}</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div id="itinerary-content-{{ itinerary.id }}"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+
+        {% if not itineraries %}
+        <div class="col-12">
+            <p class="text-center">You haven't created any itineraries yet.</p>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    {% for itinerary in itineraries %}
+    (function() {
+        var itineraryData = {{ itinerary.itinerary_data|safe }};
+        var itineraryContent = document.getElementById('itinerary-content-{{ itinerary.id }}');
+        if (Array.isArray(itineraryData)) {
+            itineraryData.forEach(function(day) {
+                var dayElement = document.createElement('div');
+                dayElement.innerHTML = '<h6>Day ' + day.day + '</h6><ul>' + 
+                    day.activities.map(function(activity) {
+                        return '<li>' + activity + '</li>';
+                    }).join('') + '</ul>';
+                itineraryContent.appendChild(dayElement);
+            });
+        } else {
+            itineraryContent.innerHTML = '<p>No itinerary data available.</p>';
+        }
+    })();
+    {% endfor %}
+});
+</script>
+{% endblock %}

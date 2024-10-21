@@ -1,0 +1,72 @@
+{% extends 'base.html' %}
+
+{% block title %}Travel Planner - Home{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center mb-5">
+    <div class="col-md-6">
+        <h2 class="mb-4 text-center">Travel Planner</h2>
+        <form method="post">
+            {% csrf_token %}
+            <div class="mb-3">
+                <input type="text" class="form-control" id="destination" name="destination" placeholder="Enter destination" required>
+            </div>
+            <div class="row mb-3">
+                <div class="col">
+                    <input type="date" class="form-control" id="start_date" name="start_date" required>
+                </div>
+                <div class="col">
+                    <input type="date" class="form-control" id="end_date" name="end_date" required>
+                </div>
+            </div>
+            <div class="mb-3">
+                <input type="number" class="form-control" id="budget" name="budget" placeholder="Enter budget" required>
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Interests</label>
+                <div class="d-flex flex-wrap">
+                    <div class="form-check me-3 mb-2">
+                        <input class="form-check-input" type="checkbox" name="interests" value="Adventure" id="adventure">
+                        <label class="form-check-label" for="adventure">Adventure</label>
+                    </div>
+                    <div class="form-check me-3 mb-2">
+                        <input class="form-check-input" type="checkbox" name="interests" value="Relaxation" id="relaxation">
+                        <label class="form-check-label" for="relaxation">Relaxation</label>
+                    </div>
+                    <div class="form-check me-3 mb-2">
+                        <input class="form-check-input" type="checkbox" name="interests" value="Culture" id="culture">
+                        <label class="form-check-label" for="culture">Culture</label>
+                    </div>
+                    <div class="form-check me-3 mb-2">
+                        <input class="form-check-input" type="checkbox" name="interests" value="Nature" id="nature">
+                        <label class="form-check-label" for="nature">Nature</label>
+                    </div>
+                </div>
+            </div>
+            <button type="submit" class="btn btn-primary w-100">Get Itinerary</button>
+        </form>
+    </div>
+</div>
+
+{% if itinerary %}
+<div class="row mt-5">
+    <div class="col-12 text-center mb-4">
+        <h3 class="itinerary-heading">Your Itinerary</h3>
+    </div>
+    {% for day in itinerary %}
+    <div class="col-md-4 mb-4">
+        <div class="card h-100">
+            <div class="card-body">
+                <h5 class="card-title">Day {{ day.day }}</h5>
+                <ul class="list-unstyled">
+                    {% for activity in day.activities %}
+                    <li>{{ activity }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% endif %}
+{% endblock %}
