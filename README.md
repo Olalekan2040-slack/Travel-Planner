@@ -1,199 +1,363 @@
+<div align="center">
+
 # 🌍 GlobeTrek: Smart Travel Planner
 
-GlobeTrek is an intelligent Django-based travel planning application that helps users create personalized itineraries based on their preferences, budget, and interests. The application features a modern dark theme, AI-powered trip planning, and integration with Google Maps and Places API.
+<img src="https://img.shields.io/badge/Django-5.2.4-092E20?style=for-the-badge&logo=django&logoColor=white" alt="Django">
+<img src="https://img.shields.io/badge/Python-3.10+-3776AB?style=for-the-badge&logo=python&logoColor=white" alt="Python">
+<img src="https://img.shields.io/badge/Bootstrap-5.3-7952B3?style=for-the-badge&logo=bootstrap&logoColor=white" alt="Bootstrap">
+<img src="https://img.shields.io/badge/SQLite-003B57?style=for-the-badge&logo=sqlite&logoColor=white" alt="SQLite">
 
-## 🚀 Features
+**An intelligent Django-based travel planning application that creates personalized itineraries based on your preferences, budget, and interests.**
 
-- **User Authentication**: Registration, login, email verification with OTP
-- **Smart Trip Planning**: AI-powered itinerary generation based on user preferences
-- **Budget Management**: Automatic budget allocation and daily spending calculations
-- **Interactive Maps**: Google Maps integration for destination visualization
-- **Hotel Recommendations**: Smart hotel suggestions within budget range
-- **Responsive Design**: Dark theme with Bootstrap 5
-- **Profile Management**: User profiles with travel interests and preferences
-- **Admin Panel**: Complete Django admin interface for management
+[🚀 Demo](#demo) • [📋 Features](#features) • [🛠️ Installation](#installation) • [📖 Documentation](#documentation) • [🤝 Contributing](#contributing)
+
+---
+
+</div>
+
+## ✨ Features
+
+<table>
+<tr>
+<td width="50%">
+
+### 🔐 **User Management**
+- ✅ Secure registration & login
+- ✅ Email verification with OTP
+- ✅ Password reset functionality  
+- ✅ User profiles with travel interests
+- ✅ Profile picture upload
+
+### 🎨 **Modern UI/UX**
+- ✅ Dark theme with Bootstrap 5
+- ✅ Responsive design for all devices
+- ✅ Beautiful gradient effects
+- ✅ Interactive animations
+- ✅ Professional dashboard
+
+</td>
+<td width="50%">
+
+### ✈️ **Smart Trip Planning**
+- ✅ AI-powered itinerary generation
+- ✅ Budget management & allocation
+- ✅ Interest-based recommendations
+- ✅ Multi-day trip planning
+- ✅ Hotel suggestions
+
+### 🗺️ **Maps & Integration**
+- ✅ Google Maps integration
+- ✅ Interactive destination maps
+- ✅ Points of interest discovery
+- ✅ Real-time location data
+- ✅ Route optimization
+
+</td>
+</tr>
+</table>
+
+---
+
+## 🎯 Demo
+
+<div align="center">
+
+### 🏠 **Home Page**
+*Clean, modern interface with dark theme*
+
+### 📊 **Dashboard**
+*Comprehensive trip management with statistics*
+
+### 🗓️ **Trip Planning**
+*Intelligent itinerary generation based on your preferences*
+
+### 🏨 **Hotel Recommendations**
+*Smart suggestions within your budget range*
+
+</div>
+
+---
 
 ## 🛠️ Technology Stack
 
-- **Backend**: Django 5.2.4, Python 3.10+
-- **Frontend**: Django Templates, Bootstrap 5, JavaScript
-- **Database**: SQLite (development), PostgreSQL (production ready)
-- **APIs**: Google Maps, Google Places, Gmail SMTP
-- **Styling**: Bootstrap 5 with custom dark theme
+<div align="center">
 
-## 📋 Prerequisites
+| Category | Technologies |
+|----------|-------------|
+| **Backend** | ![Django](https://img.shields.io/badge/Django-092E20?style=flat&logo=django&logoColor=white) ![Python](https://img.shields.io/badge/Python-3776AB?style=flat&logo=python&logoColor=white) |
+| **Frontend** | ![Bootstrap](https://img.shields.io/badge/Bootstrap-7952B3?style=flat&logo=bootstrap&logoColor=white) ![JavaScript](https://img.shields.io/badge/JavaScript-F7DF1E?style=flat&logo=javascript&logoColor=black) ![HTML5](https://img.shields.io/badge/HTML5-E34F26?style=flat&logo=html5&logoColor=white) |
+| **Database** | ![SQLite](https://img.shields.io/badge/SQLite-003B57?style=flat&logo=sqlite&logoColor=white) ![PostgreSQL](https://img.shields.io/badge/PostgreSQL-336791?style=flat&logo=postgresql&logoColor=white) |
+| **APIs** | ![Google Maps](https://img.shields.io/badge/Google_Maps-4285F4?style=flat&logo=google-maps&logoColor=white) ![Gmail](https://img.shields.io/badge/Gmail-D14836?style=flat&logo=gmail&logoColor=white) |
+| **Tools** | ![Git](https://img.shields.io/badge/Git-F05032?style=flat&logo=git&logoColor=white) ![VS Code](https://img.shields.io/badge/VS_Code-007ACC?style=flat&logo=visual-studio-code&logoColor=white) |
 
-- Python 3.10 or higher
-- Git
-- Google Maps API Key
-- Gmail account with App Password (for email features)
+</div>
 
-## 🚀 Installation
+---
 
-1. **Clone the repository**
-   ```bash
-   git clone https://github.com/Olalekan2040-slack/Travel-Planner.git
-   cd Travel-Planner
-   ```
+## � Installation
 
-2. **Create and activate virtual environment**
-   ```bash
-   python -m venv .venv
-   # On Windows
-   .venv\Scripts\activate
-   # On macOS/Linux
-   source .venv/bin/activate
-   ```
+### �📋 Prerequisites
 
-3. **Install dependencies**
-   ```bash
-   pip install -r requirements.txt
-   ```
+- 🐍 **Python 3.10+**
+- 🔑 **Google Maps API Key**
+- 📧 **Gmail Account with App Password**
 
-4. **Environment Configuration**
-   ```bash
-   cp .env.example .env
-   ```
-   
-   Edit `.env` file with your configuration:
-   ```env
-   SECRET_KEY=your-secret-key-here
-   DEBUG=True
-   ALLOWED_HOSTS=localhost,127.0.0.1
-   
-   # Email Settings (Gmail SMTP)
-   EMAIL_HOST_USER=your-email@gmail.com
-   EMAIL_HOST_PASSWORD=your-app-password
-   DEFAULT_FROM_EMAIL=your-email@gmail.com
-   
-   # Google Maps API
-   GOOGLE_MAPS_API_KEY=your-google-maps-api-key
-   ```
+### ⚡ Quick Start
 
-5. **Database Setup**
-   ```bash
-   python manage.py makemigrations
-   python manage.py migrate
-   python manage.py createsuperuser
-   ```
+```bash
+# 1️⃣ Clone the repository
+git clone https://github.com/Olalekan2040-slack/Travel-Planner.git
+cd Travel-Planner
 
-6. **Run the development server**
-   ```bash
-   python manage.py runserver
-   ```
+# 2️⃣ Create virtual environment
+python -m venv .venv
+# Windows
+.venv\Scripts\activate
+# macOS/Linux
+source .venv/bin/activate
 
-7. **Access the application**
-   - Main application: http://127.0.0.1:8000/
-   - Admin panel: http://127.0.0.1:8000/admin/
+# 3️⃣ Install dependencies
+pip install -r requirements.txt
 
-## 🔑 API Keys Setup
+# 4️⃣ Environment setup
+cp .env.example .env
+# Edit .env with your API keys
 
-### Google Maps Platform API Key
+# 5️⃣ Database setup
+python manage.py makemigrations
+python manage.py migrate
+python manage.py createsuperuser
 
-1. Go to [Google Cloud Console](https://console.cloud.google.com)
-2. Create a new project or select existing one
-3. Enable the following APIs:
-   - Maps JavaScript API
-   - Places API
-   - Geocoding API
-   - Maps Embed API
-4. Create credentials (API Key)
-5. Add the API key to your `.env` file
+# 6️⃣ Run the server
+python manage.py runserver
+```
 
-### Gmail SMTP Setup
+### 🔧 Environment Configuration
+
+Create a `.env` file with your configuration:
+
+```env
+# Django Settings
+SECRET_KEY=your-secret-key-here
+DEBUG=True
+ALLOWED_HOSTS=localhost,127.0.0.1
+
+# Email Settings
+EMAIL_HOST_USER=your-email@gmail.com
+EMAIL_HOST_PASSWORD=your-gmail-app-password
+DEFAULT_FROM_EMAIL=your-email@gmail.com
+
+# Google Maps API
+GOOGLE_MAPS_API_KEY=your-google-maps-api-key
+```
+
+---
+
+## 🔑 API Setup Guide
+
+### 🗺️ Google Maps Platform
+
+1. Visit [Google Cloud Console](https://console.cloud.google.com)
+2. Create a new project or select existing
+3. Enable these APIs:
+   - 🗺️ Maps JavaScript API
+   - 📍 Places API
+   - 🌐 Geocoding API
+   - 🖼️ Maps Embed API
+4. Create API credentials
+5. Add to your `.env` file
+
+### 📧 Gmail SMTP
 
 1. Go to [Google Account Settings](https://myaccount.google.com/apppasswords)
 2. Generate an App Password
-3. Use this app password (not your regular Gmail password) in `.env`
+3. Use this password (not your regular Gmail password)
+4. Add to your `.env` file
+
+---
 
 ## 📁 Project Structure
 
 ```
 Travel-Planner/
-├── globetrek/           # Main Django project
-├── accounts/            # User authentication app
-├── trips/              # Trip planning app
-├── core/               # Core functionality (home, about)
-├── templates/          # HTML templates
-├── static/             # Static files (CSS, JS, images)
-├── media/              # User uploaded files
-├── requirements.txt    # Python dependencies
-├── .env.example        # Environment variables template
-└── manage.py          # Django management script
+├── 🌐 globetrek/           # Main Django project
+├── 👤 accounts/            # User authentication
+├── ✈️ trips/              # Trip planning functionality
+├── 🏠 core/               # Core pages (home, about)
+├── 🎨 templates/          # HTML templates
+├── 📁 static/             # CSS, JS, images
+├── 📷 media/              # User uploads
+├── 📋 requirements.txt    # Dependencies
+├── ⚙️ .env.example        # Environment template
+└── 🚀 manage.py          # Django management
 ```
 
-## 🎨 Features Overview
+---
 
-### User Management
-- User registration with email verification
-- Secure login/logout
-- Profile management with travel interests
-- Password reset functionality
+## 🎨 Screenshots
 
-### Trip Planning
-- Create detailed trip plans
-- Set destination, dates, and budget
-- Specify travel interests
-- Automatic itinerary generation
-- Daily budget allocation
+<div align="center">
 
-### Smart Recommendations
-- Hotel suggestions based on budget
-- Points of interest based on user interests
-- Interactive maps for visualization
-- Cost-effective activity planning
+### 🌙 Dark Theme Interface
+
+<table>
+<tr>
+<td width="50%" align="center">
+<h4>🏠 Landing Page</h4>
+<em>Modern hero section with call-to-action</em>
+</td>
+<td width="50%" align="center">
+<h4>📊 User Dashboard</h4>
+<em>Comprehensive trip management</em>
+</td>
+</tr>
+<tr>
+<td width="50%" align="center">
+<h4>✈️ Trip Creation</h4>
+<em>Intuitive trip planning interface</em>
+</td>
+<td width="50%" align="center">
+<h4>🗺️ Trip Details</h4>
+<em>Interactive maps and itineraries</em>
+</td>
+</tr>
+</table>
+
+</div>
+
+---
+
+## 📖 Usage
+
+### 👤 User Registration
+1. Visit `/accounts/register/`
+2. Fill in your details
+3. Verify email with OTP
+4. Start planning trips!
+
+### ✈️ Creating a Trip
+1. Go to "Plan New Trip"
+2. Enter destination and dates
+3. Set your budget
+4. Specify interests
+5. Get AI-generated itinerary!
+
+### 🏨 Hotel Recommendations
+- Automatic suggestions based on budget
+- Ratings and reviews
+- Location mapping
+- Price comparison
+
+---
 
 ## 🚧 Development Status
 
-This is the initial release (v1.0) with core functionality implemented:
+<div align="center">
 
-✅ **Completed Features:**
-- User authentication system
-- Basic trip planning
-- Dark theme UI
-- Database models
-- Admin interface
-- Email notifications
+### 🎯 Current Version: v1.0
 
-🔄 **In Progress:**
-- Google Maps API integration
-- Advanced itinerary generation
-- PDF export functionality
-- Hotel booking integration
+| Feature | Status | Description |
+|---------|--------|-------------|
+| 🔐 User Auth | ✅ Complete | Registration, login, email verification |
+| ✈️ Trip Planning | ✅ Complete | Basic trip creation and management |
+| 🎨 UI/UX | ✅ Complete | Dark theme, responsive design |
+| 📧 Email System | ✅ Complete | SMTP integration, notifications |
+| 🗺️ Maps Integration | 🔄 In Progress | Google Maps API implementation |
+| 📄 PDF Export | 📋 Planned | Downloadable itineraries |
+| 🤝 Trip Sharing | 📋 Planned | Social features |
+| 📱 Mobile App | 📋 Future | React Native implementation |
 
-📋 **Planned Features:**
-- Weather integration
-- Social sharing
-- Trip collaboration
-- Mobile app
-- Advanced analytics
+</div>
+
+---
 
 ## 🤝 Contributing
 
+We welcome contributions! Here's how you can help:
+
+### � Bug Reports
+- Use GitHub Issues
+- Include detailed steps to reproduce
+- Add screenshots if applicable
+
+### 💡 Feature Requests  
+- Open a GitHub Issue
+- Describe the feature clearly
+- Explain the use case
+
+### 🔧 Pull Requests
 1. Fork the repository
 2. Create a feature branch
 3. Make your changes
 4. Add tests if applicable
 5. Submit a pull request
 
-## 📄 License
+### � Development Setup
+```bash
+# Install development dependencies
+pip install -r requirements-dev.txt
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+# Run tests
+python manage.py test
 
-## 🆘 Support
+# Check code style
+flake8 .
 
-For support and questions:
-- Create an issue on GitHub
-- Contact: support@globetrek.com
-
-## 🙏 Acknowledgments
-
-- Django community for the excellent framework
-- Bootstrap team for the responsive UI components
-- Google for Maps and Places APIs
-- All contributors and testers
+# Format code
+black .
+```
 
 ---
 
-**Happy Traveling! 🌟**
+## �📄 License
+
+<div align="center">
+
+This project is licensed under the **MIT License** - see the [LICENSE](LICENSE) file for details.
+
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
+</div>
+
+---
+
+## 🆘 Support & Contact
+
+<div align="center">
+
+### 💬 Get Help
+
+[![GitHub Issues](https://img.shields.io/badge/GitHub-Issues-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/Olalekan2040-slack/Travel-Planner/issues)
+[![Email Support](https://img.shields.io/badge/Email-Support-D14836?style=for-the-badge&logo=gmail&logoColor=white)](mailto:support@globetrek.com)
+
+### 🌟 Show Your Support
+
+If you find this project helpful, please give it a ⭐ on GitHub!
+
+[![GitHub stars](https://img.shields.io/github/stars/Olalekan2040-slack/Travel-Planner?style=social)](https://github.com/Olalekan2040-slack/Travel-Planner/stargazers)
+[![GitHub forks](https://img.shields.io/github/forks/Olalekan2040-slack/Travel-Planner?style=social)](https://github.com/Olalekan2040-slack/Travel-Planner/network/members)
+
+</div>
+
+---
+
+## 🙏 Acknowledgments
+
+<div align="center">
+
+**Special thanks to:**
+
+- 🐍 **Django Team** - For the amazing framework
+- 🎨 **Bootstrap Team** - For the beautiful UI components  
+- 🗺️ **Google** - For Maps and Places APIs
+- 👥 **Open Source Community** - For inspiration and contributions
+- ☕ **Coffee** - For keeping developers awake
+
+---
+
+### 🌟 **Made with ❤️ by developers, for travelers**
+
+**Happy Traveling! ✈️�**
+
+</div>
 A web app created with Django that helps users in generating an itinerary plan for a trip based on their destination, start and end date, budget and interests. 
