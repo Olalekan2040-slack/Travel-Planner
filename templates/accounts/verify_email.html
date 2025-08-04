@@ -1,0 +1,103 @@
+{% extends 'base.html' %}
+
+{% block title %}Verify Email - GlobeTrek{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-5 col-md-7">
+            <div class="card">
+                <div class="card-body p-5">
+                    <div class="text-center mb-4">
+                        <div class="feature-icon mx-auto mb-3" style="width: 80px; height: 80px;">
+                            <i class="bi bi-envelope-check"></i>
+                        </div>
+                        <h2 class="card-title fw-bold">Verify Your Email</h2>
+                        <p class="text-muted">
+                            We've sent a verification code to<br>
+                            <strong>{{ email }}</strong>
+                        </p>
+                    </div>
+                    
+                    <form method="post" novalidate>
+                        {% csrf_token %}
+                        
+                        <div class="mb-4">
+                            <label for="otp" class="form-label">Verification Code</label>
+                            <input type="text" 
+                                   class="form-control text-center" 
+                                   id="otp" 
+                                   name="otp" 
+                                   maxlength="6"
+                                   pattern="[0-9]{6}"
+                                   placeholder="Enter 6-digit code"
+                                   required
+                                   autofocus
+                                   style="font-size: 1.5rem; letter-spacing: 0.5rem;">
+                            <div class="form-text">Check your email for the 6-digit verification code</div>
+                        </div>
+                        
+                        <button type="submit" class="btn btn-primary w-100 mb-3">
+                            <i class="bi bi-check-circle me-2"></i>Verify Email
+                        </button>
+                        
+                        <div class="text-center">
+                            <p class="text-muted mb-2">Didn't receive the code?</p>
+                            <form method="post" action="{% url 'accounts:resend_otp' %}" class="d-inline">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-link text-decoration-none p-0">
+                                    Resend Code
+                                </button>
+                            </form>
+                        </div>
+                        
+                        <hr class="my-4">
+                        
+                        <div class="text-center">
+                            <p class="mb-0 text-muted">
+                                Wrong email address? 
+                                <a href="{% url 'accounts:register' %}" class="text-decoration-none">Register again</a>
+                            </p>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            
+            <div class="text-center mt-4">
+                <div class="row text-muted">
+                    <div class="col-4">
+                        <i class="bi bi-clock"></i>
+                        <div>10 min expiry</div>
+                    </div>
+                    <div class="col-4">
+                        <i class="bi bi-shield-check"></i>
+                        <div>Secure</div>
+                    </div>
+                    <div class="col-4">
+                        <i class="bi bi-envelope"></i>
+                        <div>One-time use</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// Auto-format OTP input
+document.getElementById('otp').addEventListener('input', function(e) {
+    const value = e.target.value.replace(/\D/g, '').substring(0, 6);
+    e.target.value = value;
+});
+
+// Auto-submit when 6 digits are entered
+document.getElementById('otp').addEventListener('input', function(e) {
+    if (e.target.value.length === 6) {
+        // Small delay to let user see the complete code
+        setTimeout(() => {
+            document.querySelector('form').submit();
+        }, 500);
+    }
+});
+</script>
+{% endblock %}

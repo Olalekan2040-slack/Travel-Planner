@@ -1,0 +1,146 @@
+{% extends 'base.html' %}
+
+{% block title %}About - GlobeTrek{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row">
+        <div class="col-lg-8 mx-auto">
+            <div class="text-center mb-5">
+                <h1 class="display-4 fw-bold">About GlobeTrek</h1>
+                <p class="lead text-muted">Your smart travel planning companion</p>
+            </div>
+            
+            <div class="card mb-5">
+                <div class="card-body p-5">
+                    <h2 class="h3 mb-4">Our Mission</h2>
+                    <p class="lead">
+                        At GlobeTrek, we believe that everyone deserves to explore the world and create unforgettable memories. 
+                        Our mission is to make travel planning simple, smart, and accessible to everyone, regardless of their 
+                        budget or experience level.
+                    </p>
+                    
+                    <h2 class="h3 mb-4 mt-5">What We Do</h2>
+                    <p>
+                        GlobeTrek is an intelligent travel planning platform that helps you create personalized itineraries 
+                        based on your preferences, interests, and budget. Using advanced algorithms and real-time data from 
+                        Google Places API, we provide you with:
+                    </p>
+                    
+                    <ul class="list-unstyled mt-4">
+                        <li class="mb-3">
+                            <i class="bi bi-check-circle-fill text-success me-3"></i>
+                            <strong>Smart Itinerary Generation:</strong> AI-powered daily plans tailored to your interests
+                        </li>
+                        <li class="mb-3">
+                            <i class="bi bi-check-circle-fill text-success me-3"></i>
+                            <strong>Budget-Conscious Planning:</strong> Stay within your budget with cost-effective recommendations
+                        </li>
+                        <li class="mb-3">
+                            <i class="bi bi-check-circle-fill text-success me-3"></i>
+                            <strong>Hotel Recommendations:</strong> Find the perfect accommodation for your needs
+                        </li>
+                        <li class="mb-3">
+                            <i class="bi bi-check-circle-fill text-success me-3"></i>
+                            <strong>Interactive Maps:</strong> Visualize your journey with embedded maps
+                        </li>
+                        <li class="mb-3">
+                            <i class="bi bi-check-circle-fill text-success me-3"></i>
+                            <strong>Offline Access:</strong> Download your itineraries for offline use
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="row g-4 mb-5">
+                <div class="col-md-4">
+                    <div class="card h-100 text-center">
+                        <div class="card-body">
+                            <div class="feature-icon mx-auto mb-3" style="width: 60px; height: 60px; font-size: 1.5rem;">
+                                <i class="bi bi-lightbulb"></i>
+                            </div>
+                            <h4>Innovation</h4>
+                            <p class="text-muted">
+                                We continuously innovate to provide the best travel planning experience
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card h-100 text-center">
+                        <div class="card-body">
+                            <div class="feature-icon mx-auto mb-3" style="width: 60px; height: 60px; font-size: 1.5rem;">
+                                <i class="bi bi-people"></i>
+                            </div>
+                            <h4>Community</h4>
+                            <p class="text-muted">
+                                Join a community of travelers sharing experiences and recommendations
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card h-100 text-center">
+                        <div class="card-body">
+                            <div class="feature-icon mx-auto mb-3" style="width: 60px; height: 60px; font-size: 1.5rem;">
+                                <i class="bi bi-shield-check"></i>
+                            </div>
+                            <h4>Trust</h4>
+                            <p class="text-muted">
+                                Your privacy and data security are our top priorities
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card">
+                <div class="card-body p-5">
+                    <h2 class="h3 mb-4">Our Technology</h2>
+                    <p>
+                        GlobeTrek is built using modern web technologies to ensure a fast, reliable, and secure experience:
+                    </p>
+                    
+                    <div class="row mt-4">
+                        <div class="col-md-6">
+                            <h5>Backend</h5>
+                            <ul>
+                                <li>Django (Python Web Framework)</li>
+                                <li>PostgreSQL Database</li>
+                                <li>RESTful API Architecture</li>
+                            </ul>
+                        </div>
+                        <div class="col-md-6">
+                            <h5>Integrations</h5>
+                            <ul>
+                                <li>Google Maps & Places API</li>
+                                <li>Gmail SMTP for notifications</li>
+                                <li>Weather API integration</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="text-center mt-5">
+                <h2 class="h3 mb-4">Ready to Start Planning?</h2>
+                <p class="lead mb-4">
+                    Join thousands of travelers who trust GlobeTrek for their adventures
+                </p>
+                {% if not user.is_authenticated %}
+                <a href="{% url 'accounts:register' %}" class="btn btn-primary btn-lg me-3">
+                    <i class="bi bi-person-plus me-2"></i>Get Started Free
+                </a>
+                {% else %}
+                <a href="{% url 'trips:create' %}" class="btn btn-primary btn-lg me-3">
+                    <i class="bi bi-plus-circle me-2"></i>Plan Your Next Trip
+                </a>
+                {% endif %}
+                <a href="{% url 'core:home' %}" class="btn btn-outline-primary btn-lg">
+                    <i class="bi bi-house me-2"></i>Back to Home
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

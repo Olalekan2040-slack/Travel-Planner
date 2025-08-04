@@ -1,0 +1,214 @@
+{% extends 'base.html' %}
+
+{% block title %}Plan New Trip - GlobeTrek{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title mb-0">
+                        <i class="bi bi-plus-circle me-2"></i>Plan Your Next Adventure
+                    </h2>
+                    <p class="text-muted mb-0">Tell us about your dream trip and we'll create a personalized itinerary</p>
+                </div>
+                <div class="card-body p-4">
+                    <form method="post" novalidate>
+                        {% csrf_token %}
+                        
+                        <!-- Trip Title -->
+                        <div class="mb-4">
+                            <label for="title" class="form-label fw-semibold">Trip Title *</label>
+                            <input type="text" 
+                                   class="form-control" 
+                                   id="title" 
+                                   name="title" 
+                                   value="{{ form_data.title|default:'' }}"
+                                   placeholder="e.g., Summer Vacation to Paris"
+                                   required>
+                            <div class="form-text">Give your trip a memorable name</div>
+                        </div>
+                        
+                        <!-- Destination -->
+                        <div class="mb-4">
+                            <label for="destination" class="form-label fw-semibold">Destination *</label>
+                            <input type="text" 
+                                   class="form-control" 
+                                   id="destination" 
+                                   name="destination" 
+                                   value="{{ form_data.destination|default:'' }}"
+                                   placeholder="e.g., Paris, France or Tokyo, Japan"
+                                   required>
+                            <div class="form-text">Enter the city and country you want to visit</div>
+                        </div>
+                        
+                        <!-- Dates -->
+                        <div class="row mb-4">
+                            <div class="col-md-6">
+                                <label for="start_date" class="form-label fw-semibold">Start Date *</label>
+                                <input type="date" 
+                                       class="form-control" 
+                                       id="start_date" 
+                                       name="start_date" 
+                                       value="{{ form_data.start_date|default:'' }}"
+                                       required>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="end_date" class="form-label fw-semibold">End Date *</label>
+                                <input type="date" 
+                                       class="form-control" 
+                                       id="end_date" 
+                                       name="end_date" 
+                                       value="{{ form_data.end_date|default:'' }}"
+                                       required>
+                            </div>
+                        </div>
+                        
+                        <!-- Budget -->
+                        <div class="row mb-4">
+                            <div class="col-md-8">
+                                <label for="total_budget" class="form-label fw-semibold">Total Budget *</label>
+                                <input type="number" 
+                                       class="form-control" 
+                                       id="total_budget" 
+                                       name="total_budget" 
+                                       value="{{ form_data.total_budget|default:'' }}"
+                                       min="1"
+                                       step="0.01"
+                                       placeholder="1000"
+                                       required>
+                                <div class="form-text">Your total budget for the entire trip</div>
+                            </div>
+                            <div class="col-md-4">
+                                <label for="currency" class="form-label fw-semibold">Currency</label>
+                                <select class="form-select" id="currency" name="currency">
+                                    {% for code, name in currencies %}
+                                    <option value="{{ code }}" {% if form_data.currency == code or code == 'USD' %}selected{% endif %}>
+                                        {{ name }}
+                                    </option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <!-- Interests -->
+                        <div class="mb-4">
+                            <label for="interests" class="form-label fw-semibold">Travel Interests *</label>
+                            <textarea class="form-control" 
+                                      id="interests" 
+                                      name="interests" 
+                                      rows="3"
+                                      placeholder="e.g., food, culture, museums, nature, adventure, nightlife, shopping, history"
+                                      required>{{ form_data.interests|default:'' }}</textarea>
+                            <div class="form-text">Separate multiple interests with commas. This helps us suggest relevant activities.</div>
+                        </div>
+                        
+                        <!-- Additional Notes -->
+                        <div class="mb-4">
+                            <label for="additional_notes" class="form-label fw-semibold">Additional Notes</label>
+                            <textarea class="form-control" 
+                                      id="additional_notes" 
+                                      name="additional_notes" 
+                                      rows="3"
+                                      placeholder="Any special requirements, accessibility needs, or preferences...">{{ form_data.additional_notes|default:'' }}</textarea>
+                            <div class="form-text">Optional: Let us know about any special requirements</div>
+                        </div>
+                        
+                        <!-- Submit Button -->
+                        <div class="d-flex justify-content-between align-items-center">
+                            <a href="{% url 'trips:dashboard' %}" class="btn btn-outline-secondary">
+                                <i class="bi bi-arrow-left me-2"></i>Back to Dashboard
+                            </a>
+                            <button type="submit" class="btn btn-primary btn-lg">
+                                <i class="bi bi-magic me-2"></i>Create My Trip
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            
+            <!-- Trip Planning Tips -->
+            <div class="card mt-4">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="bi bi-lightbulb me-2"></i>Trip Planning Tips
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h6><i class="bi bi-currency-dollar text-success me-2"></i>Budget Planning</h6>
+                            <ul class="small text-muted">
+                                <li>Include accommodation, food, activities, and transport</li>
+                                <li>Add 10-20% buffer for unexpected expenses</li>
+                                <li>Research average costs for your destination</li>
+                            </ul>
+                        </div>
+                        <div class="col-md-6">
+                            <h6><i class="bi bi-heart text-danger me-2"></i>Interests</h6>
+                            <ul class="small text-muted">
+                                <li>Be specific about what you enjoy</li>
+                                <li>Consider seasonal activities</li>
+                                <li>Mix relaxation with adventure</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// Set minimum date to today
+document.getElementById('start_date').min = new Date().toISOString().split('T')[0];
+
+// Update end date minimum when start date changes
+document.getElementById('start_date').addEventListener('change', function() {
+    const startDate = new Date(this.value);
+    const nextDay = new Date(startDate);
+    nextDay.setDate(startDate.getDate() + 1);
+    document.getElementById('end_date').min = nextDay.toISOString().split('T')[0];
+});
+
+// Calculate and display trip duration and daily budget
+function updateTripInfo() {
+    const startDate = document.getElementById('start_date').value;
+    const endDate = document.getElementById('end_date').value;
+    const totalBudget = parseFloat(document.getElementById('total_budget').value) || 0;
+    
+    if (startDate && endDate) {
+        const start = new Date(startDate);
+        const end = new Date(endDate);
+        const timeDiff = end.getTime() - start.getTime();
+        const daysDiff = Math.ceil(timeDiff / (1000 * 3600 * 24)) + 1;
+        
+        if (daysDiff > 0) {
+            const dailyBudget = totalBudget / daysDiff;
+            const currency = document.getElementById('currency').value;
+            
+            // Show trip info
+            let infoDiv = document.getElementById('trip-info');
+            if (!infoDiv) {
+                infoDiv = document.createElement('div');
+                infoDiv.id = 'trip-info';
+                infoDiv.className = 'alert alert-info mt-3';
+                document.querySelector('form').appendChild(infoDiv);
+            }
+            
+            infoDiv.innerHTML = `
+                <i class="bi bi-info-circle me-2"></i>
+                <strong>Trip Duration:</strong> ${daysDiff} days | 
+                <strong>Daily Budget:</strong> ${dailyBudget.toFixed(2)} ${currency}
+            `;
+        }
+    }
+}
+
+document.getElementById('start_date').addEventListener('change', updateTripInfo);
+document.getElementById('end_date').addEventListener('change', updateTripInfo);
+document.getElementById('total_budget').addEventListener('input', updateTripInfo);
+document.getElementById('currency').addEventListener('change', updateTripInfo);
+</script>
+{% endblock %}

@@ -1,0 +1,191 @@
+{% extends 'base.html' %}
+
+{% block title %}Profile - GlobeTrek{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row">
+        <div class="col-lg-8 mx-auto">
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title mb-0">
+                        <i class="bi bi-person-circle me-2"></i>My Profile
+                    </h2>
+                    <p class="text-muted mb-0">Manage your account information and preferences</p>
+                </div>
+                <div class="card-body p-4">
+                    <form method="post" enctype="multipart/form-data" novalidate>
+                        {% csrf_token %}
+                        
+                        <!-- Profile Picture -->
+                        <div class="text-center mb-4">
+                            {% if profile.profile_picture %}
+                                <img src="{{ profile.profile_picture.url }}" alt="Profile Picture" class="rounded-circle mb-3" width="150" height="150" style="object-fit: cover;">
+                            {% else %}
+                                <div class="rounded-circle bg-primary text-white d-inline-flex align-items-center justify-content-center mb-3" style="width: 150px; height: 150px; font-size: 3rem;">
+                                    {{ user.first_name.0|default:user.username.0|upper }}
+                                </div>
+                            {% endif %}
+                            <div>
+                                <label for="profile_picture" class="btn btn-outline-primary btn-sm">
+                                    <i class="bi bi-camera me-2"></i>Change Photo
+                                </label>
+                                <input type="file" class="d-none" id="profile_picture" name="profile_picture" accept="image/*">
+                            </div>
+                        </div>
+                        
+                        <!-- Basic Information -->
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="first_name" class="form-label">First Name *</label>
+                                <input type="text" 
+                                       class="form-control" 
+                                       id="first_name" 
+                                       name="first_name" 
+                                       value="{{ user.first_name }}"
+                                       required>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="last_name" class="form-label">Last Name *</label>
+                                <input type="text" 
+                                       class="form-control" 
+                                       id="last_name" 
+                                       name="last_name" 
+                                       value="{{ user.last_name }}"
+                                       required>
+                            </div>
+                        </div>
+                        
+                        <!-- Email (Read-only) -->
+                        <div class="mb-3">
+                            <label for="email" class="form-label">Email Address</label>
+                            <input type="email" 
+                                   class="form-control" 
+                                   id="email" 
+                                   value="{{ user.email }}"
+                                   readonly>
+                            <div class="form-text">
+                                {% if profile.is_email_verified %}
+                                    <i class="bi bi-check-circle-fill text-success me-1"></i>Verified
+                                {% else %}
+                                    <i class="bi bi-x-circle-fill text-danger me-1"></i>Not verified
+                                {% endif %}
+                            </div>
+                        </div>
+                        
+                        <!-- Contact Information -->
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="phone" class="form-label">Phone Number</label>
+                                <input type="tel" 
+                                       class="form-control" 
+                                       id="phone" 
+                                       name="phone" 
+                                       value="{{ profile.phone }}">
+                            </div>
+                            <div class="col-md-6">
+                                <label for="nationality" class="form-label">Nationality</label>
+                                <input type="text" 
+                                       class="form-control" 
+                                       id="nationality" 
+                                       name="nationality" 
+                                       value="{{ profile.nationality }}"
+                                       placeholder="e.g., Nigerian, American">
+                            </div>
+                        </div>
+                        
+                        <!-- Date of Birth -->
+                        <div class="mb-3">
+                            <label for="date_of_birth" class="form-label">Date of Birth</label>
+                            <input type="date" 
+                                   class="form-control" 
+                                   id="date_of_birth" 
+                                   name="date_of_birth" 
+                                   value="{{ profile.date_of_birth|date:'Y-m-d' }}">
+                        </div>
+                        
+                        <!-- Travel Interests -->
+                        <div class="mb-4">
+                            <label for="interests" class="form-label">Travel Interests</label>
+                            <textarea class="form-control" 
+                                      id="interests" 
+                                      name="interests" 
+                                      rows="3"
+                                      placeholder="e.g., food, culture, nature, adventure, history">{{ profile.interests }}</textarea>
+                            <div class="form-text">Separate multiple interests with commas</div>
+                        </div>
+                        
+                        <!-- Action Buttons -->
+                        <div class="d-flex justify-content-between align-items-center">
+                            <a href="{% url 'trips:dashboard' %}" class="btn btn-outline-secondary">
+                                <i class="bi bi-arrow-left me-2"></i>Back to Dashboard
+                            </a>
+                            <div>
+                                <a href="#" class="btn btn-outline-warning me-2" data-bs-toggle="modal" data-bs-target="#changePasswordModal">
+                                    <i class="bi bi-key me-2"></i>Change Password
+                                </a>
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="bi bi-check-circle me-2"></i>Save Changes
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            
+            <!-- Account Statistics -->
+            <div class="card mt-4">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="bi bi-bar-chart me-2"></i>Account Statistics
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row text-center">
+                        <div class="col-md-3">
+                            <h4 class="text-primary">{{ user.tripplan_set.count }}</h4>
+                            <p class="text-muted mb-0">Total Trips</p>
+                        </div>
+                        <div class="col-md-3">
+                            <h4 class="text-success">{{ user.tripplan_set.filter.status='completed'.count }}</h4>
+                            <p class="text-muted mb-0">Completed</p>
+                        </div>
+                        <div class="col-md-3">
+                            <h4 class="text-info">{{ profile.get_interests_list|length }}</h4>
+                            <p class="text-muted mb-0">Interests</p>
+                        </div>
+                        <div class="col-md-3">
+                            <h4 class="text-warning">{{ user.date_joined|timesince }}</h4>
+                            <p class="text-muted mb-0">Member Since</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Change Password Modal -->
+<div class="modal fade" id="changePasswordModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    <i class="bi bi-key me-2"></i>Change Password
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <p class="text-muted">For security reasons, we'll send you an email with a password reset link.</p>
+                <p class="mb-0">Click the button below to request a password reset email.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <a href="{% url 'accounts:password_reset_request' %}" class="btn btn-primary">
+                    <i class="bi bi-envelope me-2"></i>Send Reset Email
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

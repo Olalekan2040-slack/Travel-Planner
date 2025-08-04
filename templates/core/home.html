@@ -1,0 +1,246 @@
+{% extends 'base.html' %}
+
+{% block title %}GlobeTrek - Smart Travel Planner{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="hero-section">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-6">
+                <h1 class="display-4 fw-bold mb-4">Plan Your Perfect Trip with GlobeTrek</h1>
+                <p class="lead mb-4">
+                    Discover amazing destinations, create personalized itineraries, and make memories that last a lifetime. 
+                    Our AI-powered travel planner helps you explore the world within your budget.
+                </p>
+                {% if user.is_authenticated %}
+                    <a href="{% url 'trips:create' %}" class="btn btn-primary btn-lg me-3">
+                        <i class="bi bi-plus-circle me-2"></i>Plan New Trip
+                    </a>
+                    <a href="{% url 'trips:dashboard' %}" class="btn btn-outline-light btn-lg">
+                        <i class="bi bi-grid me-2"></i>View Dashboard
+                    </a>
+                {% else %}
+                    <a href="{% url 'accounts:register' %}" class="btn btn-primary btn-lg me-3">
+                        <i class="bi bi-person-plus me-2"></i>Get Started Free
+                    </a>
+                    <a href="{% url 'accounts:login' %}" class="btn btn-outline-light btn-lg">
+                        <i class="bi bi-box-arrow-in-right me-2"></i>Login
+                    </a>
+                {% endif %}
+            </div>
+            <div class="col-lg-6 text-center">
+                <img src="https://images.unsplash.com/photo-1469474968028-56623f02e42e?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80" 
+                     alt="Travel Destination" class="img-fluid rounded shadow-lg">
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Features Section -->
+<section class="py-5">
+    <div class="container">
+        <div class="row mb-5">
+            <div class="col-12 text-center">
+                <h2 class="display-5 fw-bold">Why Choose GlobeTrek?</h2>
+                <p class="lead text-muted">Everything you need to plan the perfect trip</p>
+            </div>
+        </div>
+        
+        <div class="row g-4">
+            <div class="col-lg-4 col-md-6">
+                <div class="text-center">
+                    <div class="feature-icon">
+                        <i class="bi bi-robot"></i>
+                    </div>
+                    <h4>Smart Itinerary Generation</h4>
+                    <p class="text-muted">
+                        Our AI creates personalized day-by-day itineraries based on your interests, 
+                        budget, and travel duration.
+                    </p>
+                </div>
+            </div>
+            
+            <div class="col-lg-4 col-md-6">
+                <div class="text-center">
+                    <div class="feature-icon">
+                        <i class="bi bi-currency-dollar"></i>
+                    </div>
+                    <h4>Budget Management</h4>
+                    <p class="text-muted">
+                        Set your budget and get recommendations that fit perfectly. 
+                        Track expenses and stay within your limits.
+                    </p>
+                </div>
+            </div>
+            
+            <div class="col-lg-4 col-md-6">
+                <div class="text-center">
+                    <div class="feature-icon">
+                        <i class="bi bi-geo-alt"></i>
+                    </div>
+                    <h4>Interactive Maps</h4>
+                    <p class="text-muted">
+                        Explore destinations with interactive maps, find nearby attractions, 
+                        and get directions to your next adventure.
+                    </p>
+                </div>
+            </div>
+            
+            <div class="col-lg-4 col-md-6">
+                <div class="text-center">
+                    <div class="feature-icon">
+                        <i class="bi bi-building"></i>
+                    </div>
+                    <h4>Hotel Recommendations</h4>
+                    <p class="text-muted">
+                        Find the perfect accommodation within your budget range, 
+                        with ratings and reviews from real travelers.
+                    </p>
+                </div>
+            </div>
+            
+            <div class="col-lg-4 col-md-6">
+                <div class="text-center">
+                    <div class="feature-icon">
+                        <i class="bi bi-heart"></i>
+                    </div>
+                    <h4>Personalized Experiences</h4>
+                    <p class="text-muted">
+                        Tell us your interests and preferences, and we'll tailor 
+                        every recommendation to match your travel style.
+                    </p>
+                </div>
+            </div>
+            
+            <div class="col-lg-4 col-md-6">
+                <div class="text-center">
+                    <div class="feature-icon">
+                        <i class="bi bi-cloud-download"></i>
+                    </div>
+                    <h4>Offline Access</h4>
+                    <p class="text-muted">
+                        Download your itineraries as PDF and access them anywhere, 
+                        even without an internet connection.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+{% if user.is_authenticated and recent_trips %}
+<!-- Recent Trips Section -->
+<section class="py-5 bg-dark">
+    <div class="container">
+        <div class="row mb-4">
+            <div class="col-12">
+                <h3 class="fw-bold">Your Recent Trips</h3>
+                <p class="text-muted">Continue planning or create a new adventure</p>
+            </div>
+        </div>
+        
+        <div class="row g-4">
+            {% for trip in recent_trips %}
+            <div class="col-lg-4 col-md-6">
+                <div class="card trip-card h-100">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ trip.title }}</h5>
+                        <p class="card-text">
+                            <i class="bi bi-geo-alt me-2"></i>{{ trip.destination }}
+                        </p>
+                        <p class="card-text">
+                            <small class="text-muted">
+                                <i class="bi bi-calendar me-2"></i>{{ trip.days_count }} days
+                                <span class="ms-3">
+                                    <i class="bi bi-currency-dollar me-1"></i>{{ trip.total_budget }} {{ trip.currency }}
+                                </span>
+                            </small>
+                        </p>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <span class="badge bg-primary">{{ trip.get_status_display }}</span>
+                            <a href="{% url 'trips:detail' trip.id %}" class="btn btn-sm btn-outline-primary">
+                                View Details
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        
+        <div class="text-center mt-4">
+            <a href="{% url 'trips:dashboard' %}" class="btn btn-primary">
+                <i class="bi bi-grid me-2"></i>View All Trips
+            </a>
+        </div>
+    </div>
+</section>
+{% endif %}
+
+<!-- Statistics Section -->
+{% if user.is_authenticated %}
+<section class="py-5">
+    <div class="container">
+        <div class="row text-center">
+            <div class="col-lg-3 col-md-6 mb-4">
+                <div class="card bg-primary text-white">
+                    <div class="card-body">
+                        <i class="bi bi-suitcase2 display-4 mb-3"></i>
+                        <h3>{{ user_trip_count }}</h3>
+                        <p class="mb-0">Total Trips</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6 mb-4">
+                <div class="card bg-success text-white">
+                    <div class="card-body">
+                        <i class="bi bi-geo-alt display-4 mb-3"></i>
+                        <h3>{{ user_trip_count }}</h3>
+                        <p class="mb-0">Destinations</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6 mb-4">
+                <div class="card bg-info text-white">
+                    <div class="card-body">
+                        <i class="bi bi-calendar-check display-4 mb-3"></i>
+                        <h3>{{ user_trip_count }}</h3>
+                        <p class="mb-0">Days Planned</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6 mb-4">
+                <div class="card bg-warning text-dark">
+                    <div class="card-body">
+                        <i class="bi bi-star display-4 mb-3"></i>
+                        <h3>4.9</h3>
+                        <p class="mb-0">Avg Rating</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endif %}
+
+<!-- CTA Section -->
+{% if not user.is_authenticated %}
+<section class="py-5 bg-primary text-white">
+    <div class="container text-center">
+        <div class="row">
+            <div class="col-lg-8 mx-auto">
+                <h2 class="display-5 fw-bold mb-4">Ready to Start Your Journey?</h2>
+                <p class="lead mb-4">
+                    Join thousands of travelers who trust GlobeTrek to plan their perfect trips. 
+                    Sign up now and start exploring the world!
+                </p>
+                <a href="{% url 'accounts:register' %}" class="btn btn-light btn-lg">
+                    <i class="bi bi-person-plus me-2"></i>Sign Up Free
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,236 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ trip.title }} - GlobeTrek{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <!-- Trip Header -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-start">
+                <div>
+                    <h1 class="h2 fw-bold">{{ trip.title }}</h1>
+                    <p class="text-muted mb-2">
+                        <i class="bi bi-geo-alt me-2"></i>{{ trip.destination }}
+                    </p>
+                    <div class="d-flex align-items-center gap-3">
+                        <span class="badge bg-{% if trip.status == 'completed' %}success{% elif trip.status == 'ongoing' %}info{% elif trip.status == 'planned' %}warning{% else %}secondary{% endif %} fs-6">
+                            {{ trip.get_status_display }}
+                        </span>
+                        <small class="text-muted">
+                            <i class="bi bi-calendar me-1"></i>{{ trip.start_date|date:"M d" }} - {{ trip.end_date|date:"M d, Y" }}
+                        </small>
+                        <small class="text-muted">
+                            <i class="bi bi-clock me-1"></i>{{ trip.days_count }} days
+                        </small>
+                    </div>
+                </div>
+                <div class="btn-group" role="group">
+                    <a href="{% url 'trips:edit' trip.id %}" class="btn btn-outline-primary">
+                        <i class="bi bi-pencil me-2"></i>Edit
+                    </a>
+                    <a href="{% url 'trips:download_pdf' trip.id %}" class="btn btn-outline-secondary">
+                        <i class="bi bi-download me-2"></i>PDF
+                    </a>
+                    <a href="{% url 'trips:dashboard' %}" class="btn btn-outline-secondary">
+                        <i class="bi bi-arrow-left me-2"></i>Back
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Trip Overview -->
+    <div class="row mb-4">
+        <div class="col-lg-8">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="bi bi-info-circle me-2"></i>Trip Overview
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h6 class="text-muted">Budget Information</h6>
+                            <p class="mb-1">
+                                <strong>Total Budget:</strong> {{ trip.total_budget|floatformat:0 }} {{ trip.currency }}
+                            </p>
+                            <p class="mb-3">
+                                <strong>Daily Budget:</strong> {{ trip.daily_budget|floatformat:0 }} {{ trip.currency }}
+                            </p>
+                        </div>
+                        <div class="col-md-6">
+                            <h6 class="text-muted">Travel Dates</h6>
+                            <p class="mb-1">
+                                <strong>Start:</strong> {{ trip.start_date|date:"F d, Y" }}
+                            </p>
+                            <p class="mb-3">
+                                <strong>End:</strong> {{ trip.end_date|date:"F d, Y" }}
+                            </p>
+                        </div>
+                    </div>
+                    
+                    {% if trip.interests %}
+                    <div class="mb-3">
+                        <h6 class="text-muted">Your Interests</h6>
+                        <div>
+                            {% for interest in trip.get_interests_list %}
+                                <span class="badge bg-light text-dark me-2 mb-1">{{ interest }}</span>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    {% endif %}
+                    
+                    {% if trip.additional_notes %}
+                    <div>
+                        <h6 class="text-muted">Additional Notes</h6>
+                        <p class="mb-0">{{ trip.additional_notes }}</p>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-lg-4">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="bi bi-geo-alt me-2"></i>Location
+                    </h5>
+                </div>
+                <div class="card-body">
+                    {% if google_maps_api_key and trip.latitude and trip.longitude %}
+                        <iframe 
+                            width="100%" 
+                            height="200" 
+                            frameborder="0" 
+                            style="border:0; border-radius: 8px;" 
+                            src="https://www.google.com/maps/embed/v1/view?key={{ google_maps_api_key }}&center={{ trip.latitude }},{{ trip.longitude }}&zoom=12"
+                            allowfullscreen>
+                        </iframe>
+                    {% else %}
+                        <div class="text-center py-4">
+                            <i class="bi bi-geo-alt display-4 text-muted mb-3"></i>
+                            <p class="text-muted">Map will be available once you add your Google Maps API key</p>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Itinerary -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="bi bi-calendar-week me-2"></i>Daily Itinerary
+                    </h5>
+                </div>
+                <div class="card-body">
+                    {% if itinerary_days %}
+                        <div class="row">
+                            {% for day in itinerary_days %}
+                            <div class="col-lg-6 mb-4">
+                                <div class="card border-start border-primary border-4">
+                                    <div class="card-header bg-transparent">
+                                        <h6 class="mb-0">{{ day.title }}</h6>
+                                        <small class="text-muted">{{ day.date|date:"l, F d" }}</small>
+                                    </div>
+                                    <div class="card-body">
+                                        {% for activity in day.get_activities %}
+                                        <div class="d-flex mb-3">
+                                            <div class="text-muted me-3" style="min-width: 60px;">
+                                                {{ activity.time }}
+                                            </div>
+                                            <div class="flex-grow-1">
+                                                <strong>{{ activity.activity }}</strong>
+                                                <br>
+                                                <small class="text-muted">
+                                                    <i class="bi bi-geo-alt me-1"></i>{{ activity.location }}
+                                                    {% if activity.cost %}
+                                                        | <i class="bi bi-currency-dollar me-1"></i>{{ activity.cost|floatformat:0 }} {{ trip.currency }}
+                                                    {% endif %}
+                                                </small>
+                                            </div>
+                                        </div>
+                                        {% endfor %}
+                                        
+                                        <hr class="my-2">
+                                        <div class="text-end">
+                                            <small class="text-muted">
+                                                <strong>Day Budget: {{ day.estimated_cost|floatformat:0 }} {{ trip.currency }}</strong>
+                                            </small>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <div class="text-center py-4">
+                            <i class="bi bi-calendar-x display-4 text-muted mb-3"></i>
+                            <p class="text-muted">No itinerary generated yet</p>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Hotel Suggestions -->
+    {% if hotels %}
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="bi bi-building me-2"></i>Recommended Hotels
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        {% for hotel in hotels %}
+                        <div class="col-lg-4 col-md-6 mb-3">
+                            <div class="card border">
+                                <div class="card-body">
+                                    <h6 class="card-title">{{ hotel.name }}</h6>
+                                    <p class="card-text text-muted small">{{ hotel.address }}</p>
+                                    
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <div>
+                                            {% if hotel.rating %}
+                                                <div class="text-warning">
+                                                    {% for i in "12345" %}
+                                                        {% if forloop.counter <= hotel.rating %}
+                                                            <i class="bi bi-star-fill"></i>
+                                                        {% else %}
+                                                            <i class="bi bi-star"></i>
+                                                        {% endif %}
+                                                    {% endfor %}
+                                                    <small class="text-muted ms-1">{{ hotel.rating }}</small>
+                                                </div>
+                                            {% endif %}
+                                        </div>
+                                        {% if hotel.price_per_night %}
+                                            <div class="text-end">
+                                                <strong>{{ hotel.price_per_night|floatformat:0 }} {{ trip.currency }}</strong>
+                                                <br>
+                                                <small class="text-muted">per night</small>
+                                            </div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
