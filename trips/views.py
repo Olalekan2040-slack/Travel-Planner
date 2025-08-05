@@ -37,6 +37,9 @@ def create_trip(request):
         # Get form data
         title = request.POST.get('title', '').strip()
         destination = request.POST.get('destination', '').strip()
+        departure_location = request.POST.get('departure_location', '').strip()
+        departure_latitude = request.POST.get('departure_latitude', '')
+        departure_longitude = request.POST.get('departure_longitude', '')
         start_date = request.POST.get('start_date', '')
         end_date = request.POST.get('end_date', '')
         total_budget = request.POST.get('total_budget', '')
@@ -51,6 +54,8 @@ def create_trip(request):
             errors.append('Trip title is required')
         if not destination:
             errors.append('Destination is required')
+        if not departure_location:
+            errors.append('Departure location is required')
         if not start_date:
             errors.append('Start date is required')
         if not end_date:
@@ -98,6 +103,9 @@ def create_trip(request):
                 user=request.user,
                 title=title,
                 destination=destination,
+                departure_location=departure_location,
+                departure_latitude=float(departure_latitude) if departure_latitude else None,
+                departure_longitude=float(departure_longitude) if departure_longitude else None,
                 start_date=start_date_obj,
                 end_date=end_date_obj,
                 days_count=days_count,
@@ -108,8 +116,12 @@ def create_trip(request):
                 status='draft'
             )
             
-            # Get destination coordinates
+            # Get destination coordinates and process departure location
             get_destination_coordinates(trip)
+            process_departure_location(trip)
+            
+            # Calculate flight costs and allocate budget
+            trip.allocate_budget()
             
             # Generate itinerary
             generate_itinerary(trip)
@@ -239,6 +251,65 @@ def get_destination_coordinates(trip):
             
     except Exception as e:
         print(f"Failed to get coordinates: {e}")
+
+def process_departure_location(trip):
+    """Process departure location and get coordinates if not provided"""
+    if not trip.departure_latitude or not trip.departure_longitude:
+        # Try to geocode departure location if coordinates not provided
+        if settings.GOOGLE_MAPS_API_KEY and trip.departure_location:
+            try:
+                url = 'https://maps.googleapis.com/maps/api/geocode/json'
+                params = {
+                    'address': trip.departure_location,
+                    'key': settings.GOOGLE_MAPS_API_KEY
+                }
+                
+                response = requests.get(url, params=params)
+                data = response.json()
+                
+                if data['status'] == 'OK' and data['results']:
+                    location = data['results'][0]['geometry']['location']
+                    trip.departure_latitude = location['lat']
+                    trip.departure_longitude = location['lng']
+                    
+                    # Extract city and country from address components
+                    for component in data['results'][0]['address_components']:
+                        types = component['types']
+                        if 'locality' in types:
+                            trip.departure_city = component['long_name']
+                        elif 'country' in types:
+                            trip.departure_country = component['long_name']
+                    
+                    trip.save()
+                    
+            except Exception as e:
+                print(f"Failed to geocode departure location: {e}")
+    else:
+        # If coordinates are provided but no city/country, try reverse geocoding
+        if settings.GOOGLE_MAPS_API_KEY and not trip.departure_city:
+            try:
+                url = 'https://maps.googleapis.com/maps/api/geocode/json'
+                params = {
+                    'latlng': f'{trip.departure_latitude},{trip.departure_longitude}',
+                    'key': settings.GOOGLE_MAPS_API_KEY
+                }
+                
+                response = requests.get(url, params=params)
+                data = response.json()
+                
+                if data['status'] == 'OK' and data['results']:
+                    # Extract city and country from address components
+                    for component in data['results'][0]['address_components']:
+                        types = component['types']
+                        if 'locality' in types:
+                            trip.departure_city = component['long_name']
+                        elif 'country' in types:
+                            trip.departure_country = component['long_name']
+                    
+                    trip.save()
+                    
+            except Exception as e:
+                print(f"Failed to reverse geocode departure coordinates: {e}")
 
 def generate_itinerary(trip):
     """Generate daily itinerary for the trip"""

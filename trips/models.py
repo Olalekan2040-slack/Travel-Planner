@@ -50,20 +50,35 @@ class TripPlan(models.Model):
     
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     title = models.CharField(max_length=200)
+    
+    # Departure/Current location
+    departure_location = models.CharField(max_length=200, default="Unknown Location", help_text="Starting location (e.g., Lagos, Nigeria or New York, USA)")
+    departure_country = models.CharField(max_length=100, blank=True)
+    departure_city = models.CharField(max_length=100, blank=True)
+    departure_latitude = models.DecimalField(max_digits=9, decimal_places=6, null=True, blank=True)
+    departure_longitude = models.DecimalField(max_digits=9, decimal_places=6, null=True, blank=True)
+    
+    # Destination location
     destination = models.CharField(max_length=200)
     destination_country = models.CharField(max_length=100, blank=True)
     destination_city = models.CharField(max_length=100, blank=True)
     latitude = models.DecimalField(max_digits=9, decimal_places=6, null=True, blank=True)
     longitude = models.DecimalField(max_digits=9, decimal_places=6, null=True, blank=True)
     
+    # Travel details
     start_date = models.DateField()
     end_date = models.DateField()
     days_count = models.IntegerField()
     
+    # Budget information
     total_budget = models.DecimalField(max_digits=12, decimal_places=2)
     currency = models.CharField(max_length=3, choices=BUDGET_CURRENCIES, default='USD')
     daily_budget = models.DecimalField(max_digits=10, decimal_places=2)
+    flight_budget = models.DecimalField(max_digits=10, decimal_places=2, default=0, help_text="Estimated flight costs")
+    accommodation_budget = models.DecimalField(max_digits=10, decimal_places=2, default=0, help_text="Hotel/accommodation budget")
+    activity_budget = models.DecimalField(max_digits=10, decimal_places=2, default=0, help_text="Activities and sightseeing budget")
     
+    # User preferences
     interests = models.TextField(help_text="Comma-separated interests")
     additional_notes = models.TextField(blank=True)
     
@@ -77,7 +92,7 @@ class TripPlan(models.Model):
         ordering = ['-created_at']
     
     def __str__(self):
-        return f"{self.title} - {self.destination}"
+        return f"{self.title} - {self.departure_location} to {self.destination}"
     
     def get_interests_list(self):
         """Return interests as a list"""
@@ -85,9 +100,82 @@ class TripPlan(models.Model):
             return [interest.strip() for interest in self.interests.split(',')]
         return []
     
+    def calculate_flight_distance(self):
+        """Calculate distance between departure and destination in kilometers"""
+        if (self.departure_latitude and self.departure_longitude and 
+            self.latitude and self.longitude):
+            import math
+            
+            # Convert latitude and longitude from degrees to radians
+            lat1, lon1 = math.radians(float(self.departure_latitude)), math.radians(float(self.departure_longitude))
+            lat2, lon2 = math.radians(float(self.latitude)), math.radians(float(self.longitude))
+            
+            # Haversine formula
+            dlat = lat2 - lat1
+            dlon = lon2 - lon1
+            a = math.sin(dlat/2)**2 + math.cos(lat1) * math.cos(lat2) * math.sin(dlon/2)**2
+            c = 2 * math.asin(math.sqrt(a))
+            
+            # Earth's radius in kilometers
+            r = 6371
+            
+            return c * r
+        return 0
+    
+    def estimate_flight_cost(self):
+        """Estimate flight cost based on distance and other factors"""
+        distance = self.calculate_flight_distance()
+        if distance == 0:
+            return 0
+        
+        # Basic flight cost estimation (this is a simplified model)
+        # In reality, you'd integrate with flight APIs like Amadeus, Skyscanner, etc.
+        base_rate_per_km = 0.15  # USD per kilometer (rough estimate)
+        
+        if distance < 500:  # Domestic short flights
+            base_rate_per_km = 0.20
+        elif distance < 2000:  # Regional flights
+            base_rate_per_km = 0.15
+        elif distance < 8000:  # International flights
+            base_rate_per_km = 0.12
+        else:  # Long-haul international
+            base_rate_per_km = 0.10
+        
+        estimated_cost = distance * base_rate_per_km
+        
+        # Add seasonal and demand factors (simplified)
+        return round(estimated_cost, 2)
+    
+    def allocate_budget(self):
+        """Allocate total budget across different expense categories"""
+        if self.total_budget <= 0:
+            return
+        
+        # Get estimated flight cost
+        estimated_flight = self.estimate_flight_cost()
+        
+        # Budget allocation percentages
+        flight_percentage = min(estimated_flight / float(self.total_budget), 0.4)  # Max 40% for flights
+        accommodation_percentage = 0.35  # 35% for accommodation
+        activity_percentage = 0.25  # 25% for activities
+        # Remaining 10-15% is buffer/miscellaneous
+        
+        # Adjust if flight cost is very high
+        if flight_percentage > 0.3:
+            accommodation_percentage = 0.25
+            activity_percentage = 0.20
+        
+        self.flight_budget = self.total_budget * flight_percentage
+        self.accommodation_budget = self.total_budget * accommodation_percentage
+        self.activity_budget = self.total_budget * activity_percentage
+        
+        # Calculate daily budget for activities only (excluding flights)
+        remaining_budget = self.total_budget - self.flight_budget
+        self.daily_budget = remaining_budget / self.days_count if self.days_count > 0 else 0
+    
     def save(self, *args, **kwargs):
         if self.total_budget and self.days_count:
-            self.daily_budget = self.total_budget / self.days_count
+            self.allocate_budget()
         super().save(*args, **kwargs)
 
 class ItineraryDay(models.Model):

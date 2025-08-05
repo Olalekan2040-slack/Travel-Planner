@@ -30,6 +30,24 @@
                             <div class="form-text">Give your trip a memorable name</div>
                         </div>
                         
+                        <!-- Current/Departure Location -->
+                        <div class="mb-4">
+                            <label for="departure_location" class="form-label fw-semibold">Current Location (Departure) *</label>
+                            <div class="input-group">
+                                <input type="text" 
+                                       class="form-control" 
+                                       id="departure_location" 
+                                       name="departure_location" 
+                                       value="{{ form_data.departure_location|default:'' }}"
+                                       placeholder="e.g., Lagos, Nigeria or New York, USA"
+                                       required>
+                                <button type="button" class="btn btn-outline-primary" id="getCurrentLocation">
+                                    <i class="bi bi-geo-alt-fill me-1"></i>Use Current
+                                </button>
+                            </div>
+                            <div class="form-text">This helps us calculate flight costs and travel time</div>
+                        </div>
+                        
                         <!-- Destination -->
                         <div class="mb-4">
                             <label for="destination" class="form-label fw-semibold">Destination *</label>
@@ -210,5 +228,95 @@ document.getElementById('start_date').addEventListener('change', updateTripInfo)
 document.getElementById('end_date').addEventListener('change', updateTripInfo);
 document.getElementById('total_budget').addEventListener('input', updateTripInfo);
 document.getElementById('currency').addEventListener('change', updateTripInfo);
+
+// Geolocation functionality
+function getCurrentLocation() {
+    const button = document.getElementById('current-location-btn');
+    const input = document.getElementById('departure_location');
+    
+    if (!navigator.geolocation) {
+        alert('Geolocation is not supported by this browser.');
+        return;
+    }
+    
+    button.innerHTML = '<i class="spinner-border spinner-border-sm me-2"></i>Getting location...';
+    button.disabled = true;
+    
+    navigator.geolocation.getCurrentPosition(
+        function(position) {
+            const lat = position.coords.latitude;
+            const lng = position.coords.longitude;
+            
+            // Store coordinates in hidden fields
+            document.getElementById('departure_latitude').value = lat;
+            document.getElementById('departure_longitude').value = lng;
+            
+            // Use reverse geocoding to get location name
+            reverseGeocode(lat, lng);
+        },
+        function(error) {
+            console.error('Error getting location:', error);
+            button.innerHTML = '<i class="bi bi-geo-alt me-1"></i>Use Current';
+            button.disabled = false;
+            
+            switch(error.code) {
+                case error.PERMISSION_DENIED:
+                    alert('Location access denied. Please allow location access and try again.');
+                    break;
+                case error.POSITION_UNAVAILABLE:
+                    alert('Location information unavailable.');
+                    break;
+                case error.TIMEOUT:
+                    alert('Location request timed out.');
+                    break;
+                default:
+                    alert('An unknown error occurred while retrieving location.');
+                    break;
+            }
+        },
+        {
+            enableHighAccuracy: true,
+            timeout: 10000,
+            maximumAge: 600000 // 10 minutes
+        }
+    );
+}
+
+// Simple reverse geocoding using browser APIs or fallback
+function reverseGeocode(lat, lng) {
+    const button = document.getElementById('current-location-btn');
+    const input = document.getElementById('departure_location');
+    
+    // For now, just display coordinates until Google Maps API is integrated
+    input.value = `Current Location (${lat.toFixed(4)}, ${lng.toFixed(4)})`;
+    
+    button.innerHTML = '<i class="bi bi-geo-alt me-1"></i>Use Current';
+    button.disabled = false;
+    
+    // Show success message
+    const locationInfo = document.createElement('div');
+    locationInfo.className = 'alert alert-success alert-dismissible fade show mt-2';
+    locationInfo.innerHTML = `
+        <i class="bi bi-check-circle me-2"></i>
+        Current location captured successfully!
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    `;
+    input.parentElement.appendChild(locationInfo);
+    
+    // Auto-dismiss after 3 seconds
+    setTimeout(() => {
+        if (locationInfo.parentElement) {
+            locationInfo.remove();
+        }
+    }, 3000);
+}
+
+// Add event listener for geolocation button
+document.addEventListener('DOMContentLoaded', function() {
+    const currentLocationBtn = document.getElementById('current-location-btn');
+    if (currentLocationBtn) {
+        currentLocationBtn.addEventListener('click', getCurrentLocation);
+    }
+});
 </script>
 {% endblock %}
